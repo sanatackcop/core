@@ -5,7 +5,7 @@ import { LessonMapper } from './lessons-maper.entity';
 @Entity({ name: 'module' })
 export class Module {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   title: string;

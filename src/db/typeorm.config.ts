@@ -37,7 +37,7 @@ const mainDataSource = new DataSource({
   password: configService.get('MAIN_DB_PASSWORD'),
   database: configService.get('MAIN_DB') || 'smg_db',
   entities: entities,
-  logging: configService.get('NODE_ENV') === 'development',
+  logging: false,
   migrations: migrationFiles,
   migrationsRun: true,
   migrationsTableName: 'migrations',

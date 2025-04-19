@@ -11,7 +11,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Token } from './entities/token.entity';
 import { OtpProcessor } from './otp.processor';
 import { BullModule } from '@nestjs/bullmq';
-import { RedisModule } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 
 @Module({
