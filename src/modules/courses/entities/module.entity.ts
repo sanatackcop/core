@@ -11,6 +11,9 @@ export class Module extends AbstractEntity {
   @Column()
   description: string;
 
+  @Column()
+  duration: number;
+
   @OneToMany(() => CourseMapper, (mapper) => mapper.module)
   courseMappers: CourseMapper[];
 

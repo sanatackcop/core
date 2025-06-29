@@ -4,7 +4,6 @@ import { DeepPartial, Equal, Repository } from 'typeorm';
 import { Lesson } from '../entities/lessons.entity';
 import MaterialMapper, { MaterialType } from '../entities/material-mapper';
 import VideoService from './video.service';
-import ResourceService from './resource.service';
 import { Material, UpdateLessonDto } from '../entities/dto';
 import { LinkVideo } from '../entities/video.entity';
 import { LinkArticle } from '../entities/article.entity';

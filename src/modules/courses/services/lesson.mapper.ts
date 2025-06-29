@@ -3,17 +3,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Equal, Repository } from 'typeorm';
 import LessonMapper from '../entities/lessons-maper.entity';
 import MaterialMapperService from './material.mapper.service';
+import ModuleService from './module.service';
 
 @Injectable()
 export default class LessonMapperService {
   constructor(
     @InjectRepository(LessonMapper)
     private readonly lessonMapper: Repository<LessonMapper>,
-    private readonly materialMapper: MaterialMapperService
+    private readonly materialMapper: MaterialMapperService,
+    private readonly moduleService: ModuleService
   ) {}
 
-  create(map: DeepPartial<LessonMapper>) {
-    return this.lessonMapper.save(this.lessonMapper.create(map));
+  async create(map: DeepPartial<LessonMapper>) {
+    await this.lessonMapper.save(this.lessonMapper.create(map));
+    const module = await this.moduleService.findOne(map.module.id);
+    const { totalDuration } = await this.getMaterialsTotalDurationAndCount(
+      module.id
+    );
+    await this.moduleService.update(module.id, { duration: totalDuration });
   }
 
   async getMaterialsTotalDurationAndCount(module_id: string): Promise<{

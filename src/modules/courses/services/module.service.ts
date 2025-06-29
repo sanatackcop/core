@@ -15,7 +15,9 @@ export default class ModuleService {
   ) {}
 
   async create(module: DeepPartial<Module>) {
-    return this.moduleRepository.save(this.moduleRepository.create(module));
+    return this.moduleRepository.save(
+      this.moduleRepository.create({ ...module, duration: 0 })
+    );
   }
 
   async findOne(id: string) {
@@ -64,7 +66,7 @@ export default class ModuleService {
     }
   }
 
-  async update(moduleId: string, dto: UpdateModuleDto) {
+  async update(moduleId: string, dto: Partial<Module>) {
     const result = await this.moduleRepository.update(moduleId, dto);
     if (result.affected === 0) {
       throw new NotFoundException(`Module with ID ${moduleId} not found`);

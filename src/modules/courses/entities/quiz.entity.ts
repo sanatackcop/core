@@ -25,7 +25,9 @@ export default class Quiz extends AbstractEntity {
   @Column({ default: 0 })
   order: number;
 
-  @ManyToOne(() => QuizGroup, (QuizGroup) => QuizGroup.quizzes)
+  @ManyToOne(() => QuizGroup, (QuizGroup) => QuizGroup.quizzes, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'quiz_group_id' })
   quizGroup: Relation<QuizGroup>;
 }

@@ -34,19 +34,19 @@ export default class EnrollmentService {
     course_id: string,
     current_material_id: string
   ) {
+    console.log({ userId, course_id, current_material_id });
     const enrollment = await this.enrollmentRepo.findOne({
       where: {
         course: { id: Equal(course_id) },
         user: { id: Equal(userId) },
       },
       relations: { course: true },
-      select: { progress_counter: true, course: { material_count: true } },
     });
     if (!enrollment) throw new Error('Enrollment not found');
 
     if (enrollment.progress_counter + 1 <= enrollment.course.material_count)
-      await this.enrollmentRepo.update(enrollment, {
-        progress_counter: enrollment.progress_counter++,
+      await this.enrollmentRepo.update(enrollment.id, {
+        progress_counter: enrollment.progress_counter + 1,
         current_material_id,
       });
     else if (!enrollment.is_finished) {
@@ -67,10 +67,13 @@ export default class EnrollmentService {
     });
   }
 
-  getCurrentCoursesForUser(user_id: string) {
+  findCurrentCoursesForUser(
+    user_id: string,
+    relations?: FindOptionsRelations<Enrollment>
+  ) {
     return this.enrollmentRepo.find({
       where: { user: { id: Equal(user_id) }, is_finished: false },
-      relations: { course: true },
+      relations,
     });
   }
 
@@ -96,10 +99,10 @@ export default class EnrollmentService {
       const progressDone = enrollment.progress_counter ?? 0;
 
       if (enrollment.is_finished) {
-        totalHours += duration;
+        totalHours += duration / 60 / 60;
       } else if (duration > 0 && totalMaterials > 0) {
         const progressRatio = progressDone / totalMaterials;
-        totalHours += duration * progressRatio;
+        totalHours += (duration / 60 / 60) * progressRatio;
       }
     }
     return Math.floor(totalHours);

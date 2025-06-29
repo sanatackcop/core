@@ -1,6 +1,6 @@
 import AbstractEntity from '@libs/db/abstract.base.entity';
 import { Entity, Column } from 'typeorm';
-import { ArticleDto } from './dto';
+import { ArticleSegmentDto } from './dto';
 import { MaterialType } from './material-mapper';
 
 export declare type LinkArticle = Article & {
@@ -10,8 +10,11 @@ export declare type LinkArticle = Article & {
 
 @Entity('articles')
 export default class Article extends AbstractEntity {
+  @Column({})
+  title: string;
+
   @Column({ type: 'json', nullable: false })
-  data?: ArticleDto[];
+  data: ArticleSegmentDto[];
 
   @Column()
   duration: number;

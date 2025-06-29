@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, FindManyOptions, Repository } from 'typeorm';
-import { UpdateArticleDto } from '../entities/dto';
 import MaterialMapper, { MaterialType } from '../entities/material-mapper';
 import Article from '../entities/article.entity';
 
@@ -47,11 +46,11 @@ export default class ArticleService {
     }
   }
 
-  async update(articleId: string, dto: UpdateArticleDto) {
-    const result = await this.articleRepository.update(articleId, dto);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Article with ID ${articleId} not found`);
-    }
-    return result;
-  }
+  // async update(articleId: string, dto: UpdateArticleDto) {
+  //   const result = await this.articleRepository.update(articleId, dto);
+  //   if (result.affected === 0) {
+  //     throw new NotFoundException(`Article with ID ${articleId} not found`);
+  //   }
+  //   return result;
+  // }
 }

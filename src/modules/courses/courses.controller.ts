@@ -22,8 +22,20 @@ export class CoursesController {
     private readonly careerPathService: CareerPathService
   ) {}
 
-  @Get('/list')
+  @Get('/')
   async getAllCourses(
+    @Query('user_id') user_id: string
+  ): Promise<CoursesContext[]> {
+    try {
+      return await this.courseService.getAll(user_id);
+    } catch (error: unknown) {
+      console.log({ error });
+      throw new HttpException(error, 500);
+    }
+  }
+
+  @Get('/list')
+  async getAllCourseDetails(
     @Query('user_id') user_id: string
   ): Promise<CoursesContext[]> {
     try {
@@ -42,6 +54,7 @@ export class CoursesController {
       console.log(error);
     }
   }
+
   @Get('/report')
   async getCoursesReport(@Req() req: Request) {
     try {
@@ -143,11 +156,11 @@ export class CoursesController {
 
   @Patch('/progress/:courseId/:materialId')
   async update(
-    @Query('user_id') userId: string,
     @Param('courseId') courseId: string,
-    @Param('materialId') materialId: string
+    @Param('materialId') materialId: string,
+    @Query('user_id') userId: string
   ) {
-    await this.courseService.increaseProgress(courseId, userId, materialId);
+    await this.courseService.increaseProgress(userId, courseId, materialId);
     return { success: true };
   }
 

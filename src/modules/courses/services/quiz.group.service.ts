@@ -50,4 +50,14 @@ export default class QuizGroupService {
       relations: { quizzes: true },
     });
   }
+
+  delete(id: string) {
+    return this.quizGroupRepo.delete({
+      id: Equal(id),
+    });
+  }
+
+  update(articleId: string, quiz_group: Partial<QuizGroup>) {
+    return this.quizGroupRepo.update(articleId, quiz_group);
+  }
 }

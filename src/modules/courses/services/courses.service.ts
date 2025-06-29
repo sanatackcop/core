@@ -34,6 +34,7 @@ export class CoursesService {
         title: course.title,
         description: course.description,
         level: course.level,
+        topic: course.topic,
         course_info: course.course_info,
         isPublished: course.isPublish,
         material_count: 0,
@@ -41,14 +42,39 @@ export class CoursesService {
     );
   }
 
-  async findOne(id: string) {
+  findOne(id: string) {
     return this.courseRepository.findOne({
       where: { id: Equal(id) },
     });
   }
 
-  async findModuleById(id: string) {
+  findModuleById(id: string) {
     return this.moduleService.findOne(id);
+  }
+
+  async getAll(user_id: string): Promise<CoursesContext[]> {
+    const courses = await this.courseRepository.find();
+    const enrollments = await this.enrollmentService.findCurrentCoursesForUser(
+      user_id,
+      { course: true }
+    );
+
+    const enrolledCourseIds = new Set(enrollments.map((e) => e.course.id));
+
+    return courses.map((course) => ({
+      ...course,
+      course_info: {
+        ...course.course_info,
+        durationHours: Math.floor(course.course_info.durationHours / 60 / 60),
+      },
+      isEnrolled: enrolledCourseIds.has(course.id),
+      enrollment: enrollments.find((e) => e.course.id === course.id) || null,
+      projectsCount: 0,
+      completionRate:
+        course.completionCount && course.enrolledCount
+          ? (course.completionCount / course.enrolledCount) * 100
+          : 0,
+    }));
   }
 
   async list(userId: string): Promise<CoursesContext[]> {
@@ -86,7 +112,9 @@ export class CoursesService {
       course.id,
       userId
     );
-    return (getEnrollment.progress_counter / course.material_count) * 100;
+    return Math.floor(
+      (getEnrollment.progress_counter / course.material_count) * 100
+    );
   }
 
   async increaseProgress(
@@ -158,23 +186,16 @@ export class CoursesService {
       throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
 
     return {
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      level: course.level,
+      ...course,
       course_info: {
         ...course.course_info,
-        durationHours: Math.floor(course.course_info.durationHours / 60),
+        durationHours: Math.floor(course.course_info.durationHours / 60 / 60),
       },
-      isPublished: course.isPublished,
-      isEnrolled: enrollment ? true : false,
-      enrolledCount: course.enrolledCount,
+      isEnrolled: false,
       projectsCount: 0,
-      current_material: enrollment.current_material_id,
       completionRate: course.completionCount
         ? (course.completionCount / course.enrolledCount) * 100
         : 0,
-
       modules: (
         await Promise.all(
           course.courseMappers.map(async (mapper) => {
@@ -189,12 +210,14 @@ export class CoursesService {
         );
         return { ...module, order: courseMapper.order };
       }),
-
       ...(() => {
         return enrollment
           ? {
-              progress:
-                (enrollment.progress_counter / course.material_count) * 100,
+              current_material: enrollment.current_material_id,
+              isEnrolled: true,
+              progress: Math.floor(
+                (enrollment.progress_counter / course.material_count) * 100
+              ),
             }
           : {};
       })(),
@@ -207,9 +230,11 @@ export class CoursesService {
 
   async getCurrentCoursesForUser(userId: string) {
     const currentCourses =
-      await this.enrollmentService.getCurrentCoursesForUser(userId);
+      await this.enrollmentService.findCurrentCoursesForUser(userId, {
+        course: true,
+      });
 
-    const response = currentCourses.map((cc) => ({
+    return currentCourses.map((cc) => ({
       id: cc.course.id,
       title: cc.course.title,
       description: cc.course.description?.substring(0, 100),
@@ -217,10 +242,10 @@ export class CoursesService {
       isPublished: cc.course.isPublished,
       course_info: cc.course.course_info,
       created_at: cc.course.created_at,
-      progress: cc.progress_counter,
+      progress: Math.floor(
+        (cc.progress_counter / cc.course.material_count) * 100
+      ),
     }));
-
-    return response;
   }
 
   async countCompletedCourses(userId: string) {

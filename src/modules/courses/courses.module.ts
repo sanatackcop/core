@@ -7,7 +7,6 @@ import { CourseMapper } from './entities/courses-maper.entity';
 import LessonMapper from './entities/lessons-maper.entity';
 import { Lesson } from './entities/lessons.entity';
 import Quiz from './entities/quiz.entity';
-import Resource from './entities/resource.entity';
 import Video from './entities/video.entity';
 import { Module as ModuleEntity } from './entities/module.entity';
 import { Enrollment } from './entities/enrollment';
@@ -20,7 +19,6 @@ import { CareerEnrollment } from './entities/career-enrollment.entity';
 import { RoadmapEnrollment } from './entities/roadmap-enrollment.entity';
 import User from '../users/entities/user.entity';
 import QuizService from './services/quiz.service';
-import ResourceService from './services/resource.service';
 import VideoService from './services/video.service';
 import CareerPathService from './services/career.path.service';
 import RoadMapService from './services/roadmap.service';
@@ -47,7 +45,6 @@ import Article from './entities/article.entity';
       CourseMapper,
       LessonMapper,
       Lesson,
-      Resource,
       Quiz,
       Video,
       Enrollment,
@@ -70,7 +67,6 @@ import Article from './entities/article.entity';
     CoursesService,
     QuizService,
     VideoService,
-    ResourceService,
     CareerEnrollmentService,
     EnrollmentService,
     RoadMapEnrollmentService,
@@ -89,7 +85,6 @@ import Article from './entities/article.entity';
     QuizService,
     ArticleService,
     VideoService,
-    ResourceService,
     LessonService,
     LessonMapperService,
     MaterialMapperService,

@@ -22,19 +22,17 @@ import {
   ModuleDto,
   ModuleLessonDto,
   QuizDto,
-  ResourceDto,
-  UpdateArticleDto,
+  // UpdateArticleDto,
   UpdateCourseDto,
   UpdateLessonDto,
   UpdateModuleDto,
-  UpdateResourceDto,
+  UpdateQuizDto,
   UpdateVideoDto,
   VideoDto,
 } from '../courses/entities/dto';
 import RoadMapService from '../courses/services/roadmap.service';
 import CareerPathService from '../courses/services/career.path.service';
 import VideoService from '../courses/services/video.service';
-import ResourceService from '../courses/services/resource.service';
 import LessonService from '../courses/services/lesson.service';
 import LessonMapperService from '../courses/services/lesson.mapper';
 import MaterialMapperService from '../courses/services/material.mapper.service';
@@ -56,7 +54,6 @@ export class AdminController {
     private readonly quizGroupService: QuizGroupService,
     private readonly videoService: VideoService,
     private readonly articleService: ArticleService,
-    private readonly resourceService: ResourceService,
     private readonly lessonService: LessonService,
     private readonly materialMapper: MaterialMapperService,
     private readonly moduleService: ModuleService,
@@ -136,22 +133,13 @@ export class AdminController {
 
   // *** Articles
   @Post('/article')
-  async createNewArticle(@Body() data: ArticleDto[]) {
-    return await this.articleService.create(data as any);
+  async createNewArticle(@Body() data: ArticleDto) {
+    return await this.articleService.create(data);
   }
+
   @Get('/articles')
   async getAllArticles() {
     return await this.articleService.getAll();
-  }
-
-  @Post('/resources')
-  async createNewResource(@Body() data: ResourceDto) {
-    return await this.resourceService.create(data);
-  }
-
-  @Get('/resources')
-  async getAllResource() {
-    return await this.resourceService.getAll();
   }
 
   @Post('/lessons')
@@ -319,14 +307,14 @@ export class AdminController {
     }
   }
 
-  // @Delete('/quizzes/:quiz_id')
-  // async deleteQuiz(@Param('quiz_id') quiz_id: string) {
-  //   try {
-  // return await this.quizGroupService.delete(quiz_id);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
+  @Delete('/quizzes/:quiz_id')
+  async deleteQuiz(@Param('quiz_id') quiz_id: string) {
+    try {
+      return await this.quizGroupService.delete(quiz_id);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   @Delete('/resources/:resource_id')
   async deleteResource(@Param('resource_id') resource_id: string) {
@@ -399,37 +387,25 @@ export class AdminController {
     }
   }
 
-  @Patch('/articles/:article_id')
-  async updateArticle(
-    @Param('article_id') article_id: string,
-    @Body() dto: UpdateArticleDto
-  ) {
-    try {
-      return await this.articleService.update(article_id, dto);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  // @Patch('/quizzes/:quiz_id')
-  // async updateQuiz(
-  //   @Param('quiz_id') quiz_id: string,
-  //   @Body() dto: UpdateQuizDto
+  // @Patch('/articles/:article_id')
+  // async updateArticle(
+  //   @Param('article_id') article_id: string,
+  //   @Body() dto: UpdateArticleDto
   // ) {
   //   try {
-  // return await this.quizGroupService.update(quiz_id, dto);
+  //     return await this.articleService.update(article_id, dto);
   //   } catch (err) {
   //     console.log(err);
   //   }
   // }
 
-  @Patch('/resources/:resource_id')
-  async updateResource(
-    @Param('resource_id') resource_id: string,
-    @Body() dto: UpdateResourceDto
+  @Patch('/quizzes/:quiz_id')
+  async updateQuiz(
+    @Param('quiz_id') quiz_id: string,
+    @Body() dto: UpdateQuizDto
   ) {
     try {
-      return await this.articleService.update(resource_id, dto);
+      return await this.quizGroupService.update(quiz_id, dto);
     } catch (err) {
       console.log(err);
     }

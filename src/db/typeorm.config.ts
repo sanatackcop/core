@@ -8,7 +8,6 @@ import { Module } from 'src/modules/courses/entities/module.entity';
 import { CourseMapper } from 'src/modules/courses/entities/courses-maper.entity';
 import LessonMapper from 'src/modules/courses/entities/lessons-maper.entity';
 import { Lesson } from 'src/modules/courses/entities/lessons.entity';
-import Resource from 'src/modules/courses/entities/resource.entity';
 import Quiz from 'src/modules/courses/entities/quiz.entity';
 import Video from 'src/modules/courses/entities/video.entity';
 import { Enrollment } from 'src/modules/courses/entities/enrollment';
@@ -39,7 +38,6 @@ export const entities = [
   CourseMapper,
   LessonMapper,
   Lesson,
-  Resource,
   Quiz,
   QuizGroup,
   Video,

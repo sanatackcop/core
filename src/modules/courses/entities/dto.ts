@@ -23,12 +23,7 @@ import { Type } from 'class-transformer';
 import { LinkVideo } from './video.entity';
 import { LinkArticle } from './article.entity';
 import { QuizGroupIF } from './quiz.group.entity';
-
-export enum Level {
-  'BEGINNER' = 'BEGINNER',
-  'INTERMEDIATE' = 'INTERMEDIATE',
-  'ADVANCED' = 'ADVANCED',
-}
+import { CourseTopic, Level } from './courses.entity';
 
 export interface CreateResourceDto {
   id?: string;
@@ -74,17 +69,21 @@ export interface CreateModuleDto {
 export class CourseInfoDto {
   @IsArray()
   @IsString({ each: true })
+  @IsNotEmpty()
   tags: string[];
 
   @IsArray()
   @IsString({ each: true })
+  @IsNotEmpty()
   prerequisites: string[];
 
   @IsArray()
   @IsString({ each: true })
+  @IsNotEmpty()
   new_skills_result: string[];
 
   @IsObject()
+  @IsNotEmpty()
   learning_outcome: { [key: string]: number };
 }
 
@@ -96,6 +95,11 @@ export class CreateNewCourseDto {
   @IsNotEmpty()
   @IsString()
   description?: string;
+
+  @IsNotEmpty()
+  @IsEnum(CourseTopic)
+  @IsString()
+  topic: CourseTopic;
 
   @IsNotEmpty()
   @IsEnum(Level)
@@ -239,30 +243,6 @@ export class CourseModuleDto {
   order: number;
 }
 
-export class ResourceDto {
-  @IsNotEmpty({ message: 'العنوان مطلوب' })
-  @IsString()
-  title: string;
-
-  @IsString()
-  description?: string;
-
-  @IsNotEmpty({ message: 'نوع المورد مطلوب' })
-  @IsLowercase()
-  @IsEnum(MaterialType, { message: 'نوع المورد غير صالح' })
-  type: MaterialType;
-
-  @IsUrl({}, { message: 'الرابط غير صالح' })
-  url?: string;
-
-  @IsString()
-  content?: string;
-
-  @IsNumber({}, { message: 'المدة يجب أن تكون رقمًا' })
-  @Min(0, { message: 'المدة يجب أن تكون رقمًا موجبًا' })
-  duration: number;
-}
-
 export class QuizItemDto {
   @IsString()
   @IsNotEmpty()
@@ -335,25 +315,21 @@ class QuoteDto {
 
 type ArticleTypes = 'hero' | 'section' | 'conclusion';
 
-export class ArticleDto {
+export class ArticleSegmentDto {
   @IsOptional()
   @IsNumber()
-  id?: number;
+  article_id: number;
 
   @IsEnum(['hero', 'section', 'conclusion'])
   type: ArticleTypes;
 
   @IsOptional()
   @IsString()
-  title?: string;
+  title: string;
 
   @IsOptional()
   @IsString()
   image?: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
 
   @IsOptional()
   @IsString()
@@ -365,6 +341,10 @@ export class ArticleDto {
   code?: CodeDto;
 
   @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
   @ValidateNested()
   @Type(() => QuoteDto)
   quote?: QuoteDto;
@@ -372,6 +352,22 @@ export class ArticleDto {
   @IsOptional()
   @IsNumber()
   order?: number;
+}
+
+export class ArticleDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ArticleSegmentDto)
+  data: ArticleSegmentDto[];
+
+  @IsNotEmpty()
+  @IsNumber()
+  duration: number;
 }
 
 export interface User {
@@ -438,17 +434,17 @@ export class UpdateLessonDto {
   description?: string;
 }
 
-export class UpdateArticleDto {
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ArticleDto)
-  data?: ArticleDto[];
+// export class UpdateArticleDto {
+//   @IsOptional()
+//   @IsArray()
+//   @ValidateNested({ each: true })
+//   @Type(() => ArticleDto)
+//   data?: ArticleDto[];
 
-  @IsOptional()
-  @IsNumber()
-  duration?: number;
-}
+//   @IsOptional()
+//   @IsNumber()
+//   duration?: number;
+// }
 
 export class UpdateQuizDto {
   @IsOptional()
